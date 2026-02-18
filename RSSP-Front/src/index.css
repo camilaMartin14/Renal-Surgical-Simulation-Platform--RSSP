@@ -1,0 +1,182 @@
+/* Light theme – surgical training simulator */
+:root {
+  /* Core Palette - Slate & Sky */
+  --bg: #F8FAFC; /* Slate 50 - Cleaner light bg */
+  --bg-card: #FFFFFF;
+  --bg-sidebar: #1E293B; /* Slate 800 - Dark sidebar for contrast */
+  --bg-dark: #0F172A; /* Slate 900 */
+  
+  /* Simulation Specifics */
+  --sim-bg: #1e293b;        /* Slate 800 */
+  --sim-bg-dark: #0f172a;   /* Slate 900 */
+  --sim-border: #334155;    /* Slate 700 */
+  --sim-overlay: rgba(15, 23, 42, 0.9);
+  
+  --primary: #0F172A; /* Slate 900 */
+  --primary-hover: #1E293B; /* Slate 800 */
+  
+  --accent: #0EA5E9; /* Sky 500 - Medical Blue */
+  --accent-dim: #38BDF8; /* Sky 400 */
+  --accent-dark: #0284C7; /* Sky 600 */
+  
+  --text: #0F172A; /* Slate 900 */
+  --text-muted: #64748B; /* Slate 500 */
+  --text-light: #F1F5F9; /* Slate 100 */
+  --text-on-dark: #F8FAFC;
+  --text-muted-on-dark: #94A3B8;
+  
+  --border: #E2E8F0; /* Slate 200 */
+  
+  /* Status Indicators */
+  --danger: #EF4444; /* Red 500 */
+  --success: #10B981; /* Emerald 500 */
+  --warning: #F59E0B; /* Amber 500 */
+  --info: #3B82F6; /* Blue 500 */
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+#root { min-height: 100vh; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Buttons */
+button {
+  cursor: pointer;
+  font: inherit;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+button:hover { background: var(--primary-hover); }
+
+button.secondary {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+button.secondary:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+
+button.accent {
+  background: var(--accent);
+}
+button.accent:hover {
+  background: var(--accent-dim);
+}
+
+/* Forms */
+input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #f8fafc;
+  font-size: 1rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.1);
+}
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+/* Layout Utilities */
+.flex { display: flex; }
+.flex-col { display: flex; flexDirection: column; }
+.items-center { alignItems: center; }
+.justify-between { justifyContent: space-between; }
+.gap-4 { gap: 1rem; }
+.p-4 { padding: 1rem; }
+.text-sm { font-size: 0.875rem; }
+.font-bold { font-weight: 700; }
+
+.card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* Game specific */
+.game-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.metrics {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.metric { 
+  background: var(--bg-card); 
+  padding: 0.5rem 1rem; 
+  border-radius: 8px; 
+  border: 1px solid var(--border); 
+}
+
+.canvas-wrap {
+  background: var(--bg-dark); /* Dark background for simulation */
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border);
+}
+
+.canvas-wrap.error-flash,
+.error-flash {
+  box-shadow: 0 0 0 4px var(--danger);
+  animation: error-pulse 0.5s ease-out;
+}
+
+@keyframes error-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px var(--danger); }
+  50% { box-shadow: 0 0 0 8px var(--danger); opacity: 0.95; }
+}
+
+.full-canvas { width: 100%; height: 100%; display: block; }
+
+.error-badge {
+  position: absolute;
+  top: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--danger);
+  color: white;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  z-index: 10;
+  animation: error-badge-in 0.2s ease-out;
+}
+
+@keyframes error-badge-in {
+  from { opacity: 0; transform: translateX(-50%) scale(0.9); }
+  to { opacity: 1; transform: translateX(-50%) scale(1); }
+}
