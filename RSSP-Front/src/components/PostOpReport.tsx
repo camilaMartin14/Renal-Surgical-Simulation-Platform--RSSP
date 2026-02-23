@@ -35,6 +35,12 @@ export default function PostOpReport({ report, onClose }: PostOpReportProps) {
       summary += ' El tiempo fue bueno, pero la precisión sugiere que se sacrificó control por velocidad.'
     }
 
+    let performanceMessage: string
+    if (score >= 95) performanceMessage = 'Ejecución Maestra'
+    else if (score >= 85) performanceMessage = 'Excelente Desempeño'
+    else if (score >= 70) performanceMessage = 'Buen Desempeño'
+    else performanceMessage = 'Requiere Práctica'
+
     switch (report.gameId) {
       case 'line-precision':
         nextStep =
@@ -70,7 +76,7 @@ export default function PostOpReport({ report, onClose }: PostOpReportProps) {
         nextStep = 'Repite el escenario en la misma dificultad antes de progresar al siguiente nivel.'
     }
 
-    return { summary, nextStep }
+    return { summary, nextStep, performanceMessage }
   }, [report])
 
   const handleSign = () => {
@@ -123,6 +129,12 @@ export default function PostOpReport({ report, onClose }: PostOpReportProps) {
               <span style={{ color: 'var(--text-muted)' }}>Puntaje de Precisión:</span>
               <span style={{ fontWeight: 700, fontSize: '1.1rem', color: report.score >= 80 ? 'var(--success)' : 'var(--warning)' }}>
                 {report.score.toFixed(1)}%
+              </span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed var(--border)', paddingBottom: '0.5rem' }}>
+              <span style={{ color: 'var(--text-muted)' }}>Desempeño General:</span>
+              <span style={{ fontWeight: 600, color: 'var(--navy)' }}>
+                {qualitative.performanceMessage}
               </span>
             </div>
           </div>

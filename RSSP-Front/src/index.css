@@ -412,6 +412,15 @@ label {
   flex-shrink: 0;
 }
 
+@media (min-width: 800px) {
+  .dashboard-sidebar {
+    position: sticky;
+    top: 5.5rem;
+    height: fit-content;
+    z-index: 20;
+  }
+}
+
 .dashboard-sidebar-inner {
   background:
     linear-gradient(180deg, var(--bg-elevated), var(--bg-card));

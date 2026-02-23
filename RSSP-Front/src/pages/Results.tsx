@@ -56,12 +56,10 @@ export default function Results() {
       }
       if (search.trim().length > 0) {
         const term = search.toLowerCase()
-        const note = (r.note ?? '').toLowerCase()
-        const email = (r.userEmail ?? '').toLowerCase()
         const diff = (r.difficulty ?? '').toLowerCase()
         const game = r.gameId.toLowerCase()
         const perfection = r.perfection.toString()
-        if (![note, email, diff, game, perfection].some((s) => s.includes(term))) {
+        if (![diff, game, perfection].some((s) => s.includes(term))) {
           return false
         }
       }
@@ -615,25 +613,7 @@ export default function Results() {
                   </div>
                 </div>
 
-                <div className="card" style={{ background: 'linear-gradient(to bottom right, var(--bg-card), var(--bg-soft))' }}>
-                  <h4 style={{ margin: '0 0 0.75rem', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 24, height: 24, background: 'var(--accent)', borderRadius: '4px', color: 'white', fontSize: '0.75rem', fontWeight: 700 }}>IA</span>
-                    Análisis Automático
-                  </h4>
-                  <p style={{ fontSize: '0.9rem', color: 'var(--text-subtle)', lineHeight: 1.6, margin: 0 }}>
-                    {selectedResult.feedbackSummary
-                      ? selectedResult.feedbackSummary
-                      : selectedResult.perfection < 80
-                        ? 'Se detectaron movimientos irregulares. Se recomienda mejorar la estabilidad en el eje vertical.'
-                        : 'Excelente control motor. La velocidad fue consistente.'
-                    }
-                  </p>
-                  {selectedResult.recommendedNextStep && (
-                    <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-subtle)', fontSize: '0.85rem' }}>
-                      <strong style={{ color: 'var(--text)' }}>Siguiente paso:</strong> {selectedResult.recommendedNextStep}
-                    </div>
-                  )}
-                </div>
+
               </>
             )}
           </div>

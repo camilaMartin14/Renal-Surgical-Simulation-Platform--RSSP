@@ -353,9 +353,9 @@ function LinePrecisionGame() {
         {finished && <span className="metric">Perfección: {perfection}%</span>}
       </div>
 
-      <p style={{ color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-        Coloca el cursor <strong>dentro del círculo azul</strong> para empezar (solo inicia cuando está dentro). Al mover el cursor queda registrado el camino como un <strong>trazo de lápiz</strong> (línea sólida). Sigue la línea punteada lo más fielmente posible. Cada nivel tiene una ruta distinta (más curvas = más difícil).
-      </p>
+      <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+        Coloca el cursor dentro del círculo VERDE para empezar. Sigue la línea punteada lo más fielmente posible.
+      </div>
       
       <ErrorFlash 
         trigger={errorFlash} 

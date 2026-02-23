@@ -76,15 +76,6 @@ export default function Home() {
             >
               Escenarios de Entrenamiento
             </h2>
-            <p
-              style={{
-                margin: '0.35rem 0 0',
-                fontSize: '0.9rem',
-                color: 'var(--text-subtle)',
-              }}
-            >
-              Practica tareas motoras finas, control de sangrado y un caso renal integrado.
-            </p>
           </div>
         </div>
 
@@ -94,8 +85,8 @@ export default function Home() {
               Modo demo clínico
             </div>
             <div className="home-hero-text">
-              Usa la simulación de <strong>Ablación de Tumor Renal</strong> como escenario rápido para mostrar el
-              flujo operador–robot en cirugía renal mínimamente invasiva.
+              Prueba la simulación de <strong>Ablación de Tumor Renal</strong> como escenario rápido para probar el
+              flujo operador–robot en una cirugía renal mínimamente invasiva.
             </div>
           </div>
           <Link
@@ -116,7 +107,7 @@ export default function Home() {
               Reduciendo el riesgo en el diseño de robots quirúrgicos
             </h3>
             <p className="home-intro-text">
-              La aplicación surge a partir de un desafío de la plataforma No Country y consiste en una serie de minijuegos 
+              La aplicación surge a partir de un desafío de la plataforma <a href="https://nocountry.tech/showcase" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600, textDecoration: 'none' }}>No Country</a> y consiste en una serie de minijuegos 
               orientados a medir la precisión de cirujanos al manipular un robot quirúrgico. 
               Funciona como un entorno de simulación que permite evaluar interacción, desempeño y métricas de control sin necesidad de hardware físico,
                facilitando la validación temprana de decisiones de diseño en el desarrollo de robótica quirúrgica.

@@ -25,7 +25,7 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
                 RSSP
               </Link>
               <div className="app-header-tagline">
-                Plataforma de simulación para cirugía renal asistida por robot
+                Renal Surgical Simulation Platform
               </div>
             </div>
           </div>
@@ -59,8 +59,9 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
         padding: '2rem',
         marginTop: 'auto',
         borderTop: '1px solid var(--border)',
-        color: 'var(--text-muted)',
-        fontSize: '0.9rem'
+        color: 'var(--navy)',
+        fontSize: '0.9rem',
+        backgroundColor: 'var(--accent)'
       }}>
         Desarrollado por <a 
           href="https://www.linkedin.com/in/camilamartindev/" 

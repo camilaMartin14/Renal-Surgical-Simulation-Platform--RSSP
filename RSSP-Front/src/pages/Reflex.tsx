@@ -71,12 +71,6 @@ function ReflexGame() {
       nextShowTimeoutRef.current = window.setTimeout(() => {
         setVisibleId(0)
         showAtRef.current = Date.now()
-        hideTimeoutRef.current = window.setTimeout(() => {
-          setVisibleId(null)
-          setMissCount((m) => { const n = m + 1; missCountRef.current = n; return n; })
-          currentIndexRef.current = 1
-          nextShowTimeoutRef.current = window.setTimeout(showNextHard, HARD_GAP_MS)
-        }, HARD_VISIBLE_MS)
       }, 400)
     }
   }, [N, isBlinkMode])
@@ -105,12 +99,6 @@ function ReflexGame() {
     }
     setVisibleId(idx)
     showAtRef.current = Date.now()
-    hideTimeoutRef.current = window.setTimeout(() => {
-      setVisibleId(null)
-      setMissCount((m) => { const n = m + 1; missCountRef.current = n; return n; })
-      currentIndexRef.current = idx + 1
-      nextShowTimeoutRef.current = window.setTimeout(showNextHard, HARD_GAP_MS)
-    }, HARD_VISIBLE_MS)
   }, [N, endGame])
 
   const handleClick = (id: number) => {
@@ -201,7 +189,7 @@ function ReflexGame() {
 
       <p style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', textAlign: 'center' }}>
         {isBlinkMode
-          ? 'Nivel difícil: los puntos se encienden y se apagan. Haz clic en cada uno mientras esté encendido.'
+          ? 'Nivel difícil: los puntos aparecen en secuencia. Haz clic en cada uno lo más rápido posible.'
           : 'Toca solo los puntos rosa (Azalea). Clic fuera = error crítico.'}
       </p>
 
