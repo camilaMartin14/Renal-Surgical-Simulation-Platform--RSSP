@@ -1,4 +1,4 @@
-﻿using Domain.Models;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -22,6 +22,13 @@ namespace Infraestruture.Persistence.Context
         public DbSet<Test> Tests { get; set; }
         public DbSet<Attempt> Attempts { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<Patient> Patients { get; set; }
+        public DbSet<ClinicalCase> ClinicalCases { get; set; }
+        public DbSet<Scenario> Scenarios { get; set; }
+        public DbSet<SimulationSession> SimulationSessions { get; set; }
+        public DbSet<TelemetrySample> TelemetrySamples { get; set; }
+        public DbSet<TelemetryEvent> TelemetryEvents { get; set; }
+        public DbSet<AttemptMetric> AttemptMetrics { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

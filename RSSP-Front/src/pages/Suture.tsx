@@ -1,5 +1,6 @@
 import { useMemo, useState, useRef, useEffect } from 'react'
-import GameFrame, { useGameSession } from '../components/GameFrame'
+import GameFrame from '../components/GameFrame'
+import { useGameSession } from '../context/GameSessionContext'
 import DifficultySelector from '../components/DifficultySelector'
 import ErrorFlash from '../components/ErrorFlash'
 import type { Difficulty } from '../types'
@@ -123,14 +124,23 @@ function SutureGame() {
       )}
 
       <ErrorFlash trigger={errorFlash} onClear={() => setErrorFlash(false)} message="¡Orden Incorrecto!" className="canvas-wrap" style={{ width: '100%', maxWidth: W, height: H }}>
-        <div 
-          style={{ width: W, height: H, position: 'relative', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}
+          <div 
+          style={{ width: W, height: H, position: 'relative', background: 'rgba(200, 217, 230, 0.05)', borderRadius: '8px' }}
           onMouseMove={handleMouseMove}
         >
           {TARGETS.map((t, i) => (
             <div
               key={i}
+              role={started ? 'button' : undefined}
+              tabIndex={started ? 0 : -1}
               onClick={(e) => { e.stopPropagation(); handleClick(i); }}
+              onKeyDown={(e) => {
+                if (!started) return
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  handleClick(i)
+                }
+              }}
               style={{
                 position: 'absolute',
                 left: t.x - t.r,
@@ -138,13 +148,13 @@ function SutureGame() {
                 width: t.r * 2,
                 height: t.r * 2,
                 borderRadius: '50%',
-                border: '3px solid var(--accent)',
-                background: order.includes(i) ? 'var(--accent)' : 'rgba(0,0,0,0.3)',
+                border: '3px solid #F7C9D4', // Azalea
+                background: order.includes(i) ? '#F7C9D4' : 'rgba(22, 36, 46, 0.6)', // Azalea or Dark Navy transparent
                 cursor: started ? 'pointer' : 'default',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: order.includes(i) ? '#fff' : 'var(--text)',
+                color: order.includes(i) ? '#2F4858' : '#F5EFEB', // Navy text on active, Beige on inactive
                 fontWeight: 700,
                 fontSize: '1.2rem',
                 transition: 'background 0.2s, transform 0.1s'

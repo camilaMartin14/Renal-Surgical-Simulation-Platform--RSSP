@@ -15,9 +15,13 @@ namespace Application.Mapping.Attempts
         public AttemptProfile()
         {
             // De Entidad -> ReadDto (Salida)
+            CreateMap<TelemetrySample, TelemetrySampleDto>()
+                .ForMember(d => d.Timestamp, o => o.MapFrom(s => new DateTimeOffset(s.Timestamp).ToUnixTimeMilliseconds()));
+
             CreateMap<Attempt, AttemptReadDto>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.FirstName)) // Ejemplo de aplanamiento
-                .ForMember(dest => dest.TestName, opt => opt.MapFrom(src => src.Test.Name));
+                .ForMember(dest => dest.TestName, opt => opt.MapFrom(src => src.Test.Name))
+                .ForMember(dest => dest.TelemetrySamples, opt => opt.MapFrom(src => src.TelemetrySamples));
 
             // De CreateDto -> Entidad (Entrada)
             CreateMap<AttemptCreateDto, Attempt>()

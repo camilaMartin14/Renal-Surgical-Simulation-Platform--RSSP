@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
-import GameFrame, { useGameSession } from '../components/GameFrame'
+import GameFrame from '../components/GameFrame'
+import { useGameSession } from '../context/GameSessionContext'
 import DifficultySelector from '../components/DifficultySelector'
 import ErrorFlash from '../components/ErrorFlash'
 import type { Difficulty } from '../types'
@@ -50,16 +51,16 @@ function SteadyHandGame() {
     ctx.fillRect(0, 0, W, H)
     
     // Draw Zone
-    ctx.fillStyle = 'rgba(56, 189, 248, 0.25)'
+    ctx.fillStyle = 'rgba(200, 217, 230, 0.15)' // Sky Blue transparent
     ctx.beginPath()
     ctx.arc(zoneCenter.x, zoneCenter.y, ZONE_R, 0, Math.PI * 2)
     ctx.fill()
-    ctx.strokeStyle = 'var(--accent)'
+    ctx.strokeStyle = '#F7C9D4' // Azalea
     ctx.lineWidth = 2
     ctx.stroke()
     
     // Draw Cursor
-    ctx.fillStyle = 'var(--accent)'
+    ctx.fillStyle = '#F7C9D4' // Azalea
     ctx.beginPath()
     ctx.arc(pos.x, pos.y, 10, 0, Math.PI * 2)
     ctx.fill()
@@ -137,7 +138,14 @@ function SteadyHandGame() {
        trackMovement(e.clientX, e.clientY)
     }
 
-    if (!started) return
+    if (!started) {
+      // Auto-start if inside zone
+      const d = Math.hypot(x - CENTER.x, y - CENTER.y)
+      if (d < ZONE_R) {
+        start()
+      }
+      return
+    }
     
     const elapsed = Date.now() - startRef.current
     const center = getZoneCenter(elapsed, amplitude, speed)
@@ -164,14 +172,14 @@ function SteadyHandGame() {
       </div>
 
       <p style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', textAlign: 'center' }}>
-        Sigue el círculo con el cursor sin salir. El círculo se mueve.
+        Sigue el círculo con el cursor sin salir. Coloca el mouse dentro del círculo para comenzar.
       </p>
 
-      {!started && (
+      {/* {!started && (
         <button onClick={start} className="btn-primary" style={{ marginBottom: '1rem' }}>
           Comenzar
         </button>
-      )}
+      )} */}
 
       <ErrorFlash trigger={errorFlash} onClear={() => setErrorFlash(false)} className="canvas-wrap" style={{ width: '100%', maxWidth: W, height: H }}>
         <canvas 

@@ -1,156 +1,76 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { User } from 'lucide-react'
-import { getCurrentUser, setCurrentUser as setCurrentUserInStore } from './store'
-
-type HeaderUser = {
-  id: number
-  email?: string
-}
+import { Link, useLocation } from 'react-router-dom'
 
 export default function Layout({ children }: { children?: React.ReactNode }) {
   const location = useLocation()
-  const navigate = useNavigate()
-  const [user, setUser] = useState<HeaderUser | null>(null)
-
-  useEffect(() => {
-    setUser(getCurrentUser())
-  }, [location.pathname])
-
-  const handleLogout = () => {
-    setCurrentUserInStore(null)
-    setUser(null)
-    navigate('/login')
-  }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <header
-        style={{
-          padding: '0.75rem 1.5rem',
-          background: 'var(--bg-sidebar)',
-          borderBottom: '1px solid rgba(255,255,255,0.1)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1.5rem',
-          color: 'white',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ width: 24, height: 24, background: 'rgba(255,255,255,0.2)', borderRadius: 4 }}></div>
-          <Link to="/" style={{ color: 'white', fontWeight: 700, fontSize: '1.25rem', textDecoration: 'none' }}>
-            RSSP
-          </Link>
-        </div>
-
-        <nav style={{ marginLeft: 'auto', display: 'flex', gap: '0.5rem' }}>
-          <Link
-            to="/"
-            style={{
-              color: 'white',
-              textDecoration: 'none',
-              padding: '0.5rem 1rem',
-              borderRadius: '20px',
-              background: location.pathname === '/' ? 'rgba(255,255,255,0.1)' : 'transparent',
-              fontSize: '0.9rem',
-              fontWeight: 500,
-            }}
-          >
-            Tablero
-          </Link>
-          <Link
-            to="/results"
-            style={{
-              color: 'white',
-              textDecoration: 'none',
-              padding: '0.5rem 1rem',
-              borderRadius: '20px',
-              background: location.pathname === '/results' ? 'rgba(255,255,255,0.1)' : 'transparent',
-              fontSize: '0.9rem',
-              fontWeight: 500,
-            }}
-          >
-            Resultados
-          </Link>
-        </nav>
-
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            marginLeft: '1rem',
-          }}
-        >
-          {user ? (
-            <>
-              <div
-                style={{
-                  width: 32,
-                  height: 32,
-                  background: 'var(--accent)',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
+    <div className="page-shell">
+      <header className="app-header">
+        <div className="app-header-inner">
+          <div className="app-header-brand">
+            <div className="app-header-mark">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 100 100"
+                fill="none"
+                aria-hidden="true"
               >
-                <User size={18} color="white" />
+                <circle cx="50" cy="50" r="50" fill="#D6F1FF" />
+                <path d="M50 20 V80 M20 50 H80" stroke="#FF69B4" strokeWidth="15" strokeLinecap="round" />
+              </svg>
+            </div>
+            <div>
+              <Link to="/" className="app-header-title">
+                RSSP
+              </Link>
+              <div className="app-header-tagline">
+                Plataforma de simulación para cirugía renal asistida por robot
               </div>
-              <span style={{ fontSize: '0.9rem' }}>{user.email ?? 'Usuario'}</span>
-              <button
-                type="button"
-                onClick={handleLogout}
-                style={{
-                  padding: '0.35rem 0.9rem',
-                  borderRadius: '16px',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                  background: 'transparent',
-                  color: 'white',
-                  fontSize: '0.8rem',
-                  cursor: 'pointer',
-                }}
-              >
-                Cerrar sesión
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/login"
-                style={{
-                  color: 'white',
-                  textDecoration: 'none',
-                  padding: '0.35rem 0.9rem',
-                  borderRadius: '16px',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                  fontSize: '0.8rem',
-                  fontWeight: 500,
-                }}
-              >
-                Iniciar sesión
-              </Link>
-              <Link
-                to="/register"
-                style={{
-                  color: 'var(--bg-sidebar)',
-                  background: 'white',
-                  textDecoration: 'none',
-                  padding: '0.35rem 0.9rem',
-                  borderRadius: '16px',
-                  fontSize: '0.8rem',
-                  fontWeight: 600,
-                }}
-              >
-                Registrarse
-              </Link>
-            </>
-          )}
+            </div>
+          </div>
+
+          <nav className="app-header-nav">
+            <Link
+              to="/"
+              className={location.pathname === '/' ? 'is-active' : undefined}
+            >
+              Tablero
+            </Link>
+            <Link
+              to="/results"
+              className={location.pathname === '/results' ? 'is-active' : undefined}
+            >
+              Resultados
+            </Link>
+          </nav>
+
+          <div className="app-header-user">
+          </div>
         </div>
       </header>
-      <main style={{ flex: 1, padding: '2rem', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
+
+      <main className="page-main">
         {children}
       </main>
+
+      <footer style={{
+        textAlign: 'center',
+        padding: '2rem',
+        marginTop: 'auto',
+        borderTop: '1px solid var(--border)',
+        color: 'var(--text-muted)',
+        fontSize: '0.9rem'
+      }}>
+        Desarrollado por <a 
+          href="https://www.linkedin.com/in/camilamartindev/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          style={{ color: 'var(--text)', fontWeight: 500, textDecoration: 'none' }}
+        >
+          Camila Martín
+        </a>
+      </footer>
     </div>
   )
 }

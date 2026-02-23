@@ -21,11 +21,11 @@ export default function TelemetryHeatmap({ data, width = 600, height = 400, clas
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     
     // Background
-    ctx.fillStyle = '#0f172a'
+    ctx.fillStyle = '#16242e'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
     // Draw Grid
-    ctx.strokeStyle = '#334155'
+    ctx.strokeStyle = '#2F4858'
     ctx.lineWidth = 1
     ctx.beginPath()
     for(let i=0; i<=canvas.width; i+=50) {
@@ -37,7 +37,7 @@ export default function TelemetryHeatmap({ data, width = 600, height = 400, clas
     ctx.stroke()
 
     if (!data || data.length === 0) {
-      ctx.fillStyle = '#64748b'
+      ctx.fillStyle = '#F5EFEB'
       ctx.font = '14px sans-serif'
       ctx.textAlign = 'center'
       ctx.fillText('Sin datos de telemetría disponibles', canvas.width/2, canvas.height/2)
@@ -57,10 +57,10 @@ export default function TelemetryHeatmap({ data, width = 600, height = 400, clas
       const y = ny * canvas.height
       
       // Color based on density (heat)
-      // Orange/Red for heat
+      // Azalea for heat
       const gradient = ctx.createRadialGradient(x, y, 1, x, y, 20)
-      gradient.addColorStop(0, 'rgba(249, 115, 22, 0.15)') // Orange-500
-      gradient.addColorStop(1, 'rgba(249, 115, 22, 0)')
+      gradient.addColorStop(0, 'rgba(247, 201, 212, 0.25)') // Azalea
+      gradient.addColorStop(1, 'rgba(247, 201, 212, 0)')
       
       ctx.fillStyle = gradient
       ctx.beginPath()

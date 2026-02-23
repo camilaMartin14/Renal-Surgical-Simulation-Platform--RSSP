@@ -2,7 +2,8 @@ import { useState, useRef, useCallback, useMemo, useEffect } from 'react'
 import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
-import GameFrame, { useGameSession } from '../components/GameFrame'
+import GameFrame from '../components/GameFrame'
+import { useGameSession } from '../context/GameSessionContext'
 import DifficultySelector from '../components/DifficultySelector'
 import ErrorFlash from '../components/ErrorFlash'
 import type { Difficulty } from '../types'
@@ -167,36 +168,44 @@ function TumorAblationGame() {
         const newSet = new Set(h)
         if (newSet.has(i)) return newSet
         newSet.add(i)
-        
-        // Check completion immediately
-        if (newSet.size >= COUNT) {
-          clearInterval(intervalRef.current)
-          const t = Date.now() - startRef.current
-          setTimeMs(t)
-          const errs = structureErrorsRef.current
-          
-          let perf = 100 - (t / 1000) * 1 - errs * 15
-          if (perf < 0) perf = 0
-          if (perf > 100) perf = 100
-          
-          endGame({ 
-             perfection: Math.round(perf), 
-             timeMs: t, 
-             score: Math.round(perf * 10),
-             difficulty,
-             extra: {
-               errors: errs,
-               tumors: COUNT
-             }
-          })
-        }
-        
         setHitCount(newSet.size)
         return newSet
       })
     },
-    [COUNT, endGame]
+    []
   )
+
+  useEffect(() => {
+    if (!started) return
+    
+    if (hit.size >= COUNT) {
+      clearInterval(intervalRef.current)
+      const t = Date.now() - startRef.current
+      // Ensure we don't set time multiple times or end game multiple times if effect re-runs
+      // But hit.size increasing happens once per game usually.
+      
+      // Use a flag or check if already ended? 
+      // endGame will unmount this component or navigate away, so it should be fine.
+      
+      setTimeMs(t)
+      const errs = structureErrorsRef.current
+      
+      let perf = 100 - (t / 1000) * 1 - errs * 15
+      if (perf < 0) perf = 0
+      if (perf > 100) perf = 100
+      
+      endGame({ 
+         perfection: Math.round(perf), 
+         timeMs: t, 
+         score: Math.round(perf * 10),
+         difficulty,
+         extra: {
+           errors: errs,
+           tumors: COUNT
+         }
+      })
+    }
+  }, [hit, COUNT, started, endGame, difficulty])
 
   const handleStructureHit = useCallback(() => {
     setErrorFlash(true)
@@ -255,7 +264,7 @@ function TumorAblationGame() {
             onClick={() => setMode('camera')}
             style={{
               background: mode === 'camera' ? 'var(--accent)' : 'var(--bg-card)',
-              color: mode === 'camera' ? '#fff' : 'var(--text)',
+              color: mode === 'camera' ? 'var(--navy)' : 'var(--text)',
               border: `1px solid ${mode === 'camera' ? 'var(--accent)' : 'var(--border)'}`,
               padding: '0.5rem 1rem',
               borderRadius: '4px',

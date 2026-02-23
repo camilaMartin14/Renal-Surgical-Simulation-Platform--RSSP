@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { SurgicalReport } from '../types'
 import { CheckCircle, AlertTriangle, Activity, Share2, Download } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { updateResult } from '../domain/resultsStore'
 
 interface PostOpReportProps {
   report: SurgicalReport
@@ -11,9 +12,74 @@ interface PostOpReportProps {
 export default function PostOpReport({ report, onClose }: PostOpReportProps) {
   const navigate = useNavigate()
   const [signed, setSigned] = useState(false)
+  const [note, setNote] = useState('')
+
+  const qualitative = useMemo(() => {
+    const timeSec = report.duration / 1000
+    const score = report.score
+
+    let summary: string
+    let nextStep: string
+
+    if (score >= 90) {
+      summary = 'Excelente precisión y control del instrumento.'
+    } else if (score >= 75) {
+      summary = 'Buena base técnica, con margen para afinar precisión y consistencia.'
+    } else {
+      summary = 'La precisión estuvo por debajo del objetivo. Es importante reducir errores críticos.'
+    }
+
+    if (timeSec > 90 && score >= 75) {
+      summary += ' El tiempo fue algo elevado; puedes priorizar la fluidez sin perder precisión.'
+    } else if (timeSec < 60 && score < 75) {
+      summary += ' El tiempo fue bueno, pero la precisión sugiere que se sacrificó control por velocidad.'
+    }
+
+    switch (report.gameId) {
+      case 'line-precision':
+        nextStep =
+          score >= 80
+            ? 'Prueba aumentar la dificultad o pasar al escenario Steady Hand en modo básico.'
+            : 'Repite Line Precision enfocándote en seguir la ruta sin atajos bruscos.'
+        break
+      case 'steady-hand':
+        nextStep =
+          score >= 80
+            ? 'Incrementa la dificultad o combina este ejercicio con Tumor Ablation en modo fácil.'
+            : 'Repite el ejercicio manteniendo el cursor dentro de la zona incluso a costa de ir más lento.'
+        break
+      case 'reflex':
+        nextStep =
+          score >= 80
+            ? 'Pasa al modo difícil (blink) y busca mantener tiempos de reacción bajos.'
+            : 'Repite Reflex priorizando hacer clic solo cuando estés seguro, aunque tomes más tiempo.'
+        break
+      case 'suture':
+        nextStep =
+          score >= 80
+            ? 'Prueba el escenario de Sutura con mayor complejidad o en combinación con Line Precision.'
+            : 'Practica la secuencia correcta de puntos, intentando reducir el número de errores por orden.'
+        break
+      case 'tumor-ablation':
+        nextStep =
+          score >= 80
+            ? 'Incrementa la velocidad del procedimiento manteniendo intactas las estructuras sanas.'
+            : 'Repite el escenario priorizando evitar contacto con el riñón, aunque tardes más en ablar cada tumor.'
+        break
+      default:
+        nextStep = 'Repite el escenario en la misma dificultad antes de progresar al siguiente nivel.'
+    }
+
+    return { summary, nextStep }
+  }, [report])
 
   const handleSign = () => {
     setSigned(true)
+    updateResult(report.at, {
+      note: note.trim() || undefined,
+      feedbackSummary: qualitative.summary,
+      recommendedNextStep: qualitative.nextStep,
+    })
     setTimeout(() => {
       onClose()
       navigate('/results')
@@ -37,7 +103,7 @@ export default function PostOpReport({ report, onClose }: PostOpReportProps) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
         <div>
-          <h3 style={{ fontSize: '1.1rem', color: 'var(--accent)', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Resumen del Procedimiento</h3>
+          <h3 style={{ fontSize: '1.1rem', color: 'var(--navy)', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Resumen del Procedimiento</h3>
           <div style={{ display: 'grid', gap: '1rem', fontSize: '0.95rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed var(--border)', paddingBottom: '0.5rem' }}>
               <span style={{ color: 'var(--text-muted)' }}>Paciente:</span>
@@ -75,20 +141,24 @@ export default function PostOpReport({ report, onClose }: PostOpReportProps) {
       </div>
 
       <div style={{ marginBottom: '2rem' }}>
-        <h3 style={{ fontSize: '1.1rem', color: 'var(--accent)', marginBottom: '0.5rem' }}>Instrumental Utilizado</h3>
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-          {report.instrumentsUsed.map(i => (
-            <span key={i.id} style={{ 
-              background: 'var(--bg-sidebar)', 
-              color: 'white', 
-              padding: '0.25rem 0.75rem', 
-              borderRadius: '12px',
-              fontSize: '0.85rem'
-            }}>
-              {i.name}
-            </span>
-          ))}
-        </div>
+        <h3 style={{ fontSize: '1.1rem', color: 'var(--navy)', marginBottom: '0.5rem' }}>Autoevaluación del operador</h3>
+        <textarea
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          placeholder="¿Qué crees que podrías mejorar para la próxima vez?"
+          rows={5}
+          style={{
+            width: '100%',
+            resize: 'vertical',
+            padding: '0.75rem',
+            borderRadius: '8px',
+            border: '1px solid var(--border)',
+            fontSize: '0.9rem',
+            fontFamily: 'inherit',
+            background: 'var(--bg-elevated)',
+            color: 'var(--text)',
+          }}
+        />
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '3rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
@@ -102,7 +172,7 @@ export default function PostOpReport({ report, onClose }: PostOpReportProps) {
           style={{
             padding: '0.75rem 2rem',
             background: signed ? 'var(--success)' : 'var(--accent)',
-            color: 'white',
+            color: signed ? 'white' : 'var(--navy)',
             border: 'none',
             borderRadius: '8px',
             fontWeight: 600,

@@ -43,6 +43,9 @@ export interface SurgicalReport {
   score: number
   telemetry: TelemetryPoint[]
   signedBy: string
+  gameId: GameId
+  at: string
+  difficulty?: Difficulty
 }
 
 export interface GameResult {
@@ -54,6 +57,11 @@ export interface GameResult {
   extra?: Record<string, number>
   at: string
   telemetry?: TelemetryPoint[]
+  userId?: number
+  userEmail?: string
+  note?: string
+  feedbackSummary?: string
+  recommendedNextStep?: string
 }
 
 export type Difficulty = 'easy' | 'medium' | 'hard'
@@ -72,5 +80,4 @@ export type UserRank = 'Estudiante' | 'Residente' | 'Cirujano Jefe'
 export interface UserProgress {
   rank: UserRank
   completedGames: GameId[]
-  careerModeEnabled: boolean
 }

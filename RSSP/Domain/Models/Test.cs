@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,5 +17,6 @@ namespace Domain.Models
         public string Objective { get; set; } = null!;
         public string SimulatedRegion { get; set; } = null!;
         public ICollection<Attempt> Attempts { get; set; } = new List<Attempt>();
+        public ICollection<Scenario> Scenarios { get; set; } = new List<Scenario>();
     }
 }

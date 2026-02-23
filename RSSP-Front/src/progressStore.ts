@@ -3,7 +3,6 @@ import { persist } from 'zustand/middleware'
 import { UserProgress, UserRank, GameId } from './types'
 
 interface ProgressState extends UserProgress {
-  setCareerMode: (enabled: boolean) => void
   setRank: (rank: UserRank) => void
   completeGame: (gameId: GameId) => void
   resetProgress: () => void
@@ -14,9 +13,7 @@ export const useProgressStore = create<ProgressState>()(
     (set) => ({
       rank: 'Estudiante',
       completedGames: [],
-      careerModeEnabled: false, // Default to false (optional mode)
       
-      setCareerMode: (enabled) => set({ careerModeEnabled: enabled }),
       setRank: (rank) => set({ rank }),
       completeGame: (gameId) => set((state) => ({
         completedGames: state.completedGames.includes(gameId) 

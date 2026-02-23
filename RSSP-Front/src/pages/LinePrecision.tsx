@@ -1,9 +1,10 @@
 import { useRef, useEffect, useState, useCallback, useMemo } from 'react'
-import GameFrame, { useGameSession } from '../components/GameFrame'
+import GameFrame from '../components/GameFrame'
+import { useGameSession } from '../context/GameSessionContext'
 import DifficultySelector from '../components/DifficultySelector'
 import ErrorFlash from '../components/ErrorFlash'
 import GameActions from '../components/GameActions'
-import { addResult } from '../store'
+import { useGameSound } from '../hooks/useGameSound'
 import type { Difficulty } from '../types'
 
 const W = 700
@@ -63,7 +64,7 @@ function distToSegment(
   return { dist: Math.hypot(px - qx, py - qy), t }
 }
 
-const CANVAS_BG = '#0f172a'
+const CANVAS_BG = '#16242e'
 /** Radio máximo (px) para considerar que el cursor está "sobre" la ruta y avanzar progreso. */
 const CATCH_RADIUS = 110
 /** Progreso mínimo (0..1) para dar por completada la ruta. */
@@ -83,6 +84,7 @@ export default function LinePrecision() {
 
 function LinePrecisionGame() {
   const { endGame, trackMovement } = useGameSession()
+  const { playStart, playSuccess, playError, playClick } = useGameSound()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [difficulty, setDifficulty] = useState<Difficulty>('medium')
   const PATH = useMemo(() => buildPath(difficulty), [difficulty])
@@ -92,6 +94,7 @@ function LinePrecisionGame() {
   const [timeMs, setTimeMs] = useState(0)
   const [perfection, setPerfection] = useState(100)
   const [progress, setProgress] = useState(0)
+  const [streak, setStreak] = useState(0)
   const [cursorPos, setCursorPos] = useState<[number, number] | null>(null)
   const [trailVersion, setTrailVersion] = useState(0)
   const startTime = useRef(0)
@@ -104,6 +107,7 @@ function LinePrecisionGame() {
     setStarted(false)
     setFinished(false)
     setProgress(0)
+    setStreak(0)
     setTimeMs(0)
     setPerfection(100)
     setErrorFlash(false)
@@ -125,13 +129,25 @@ function LinePrecisionGame() {
 
   const draw = useCallback((ctx: CanvasRenderingContext2D) => {
     ctx.clearRect(0, 0, W, H)
-    // Fondo semitransparente para dejar ver la imagen de fondo
-    ctx.fillStyle = 'rgba(15, 23, 42, 0.4)' 
+    
+    // Fondo mejorado: Gradiente radial para simular foco quirúrgico
+    const grad = ctx.createRadialGradient(W/2, H/2, 50, W/2, H/2, W)
+    grad.addColorStop(0, '#1e313e') // lighter navy
+    grad.addColorStop(1, '#16242e') // darker navy
+    ctx.fillStyle = grad
     ctx.fillRect(0, 0, W, H)
+    
+    // Grid sutil
+    ctx.strokeStyle = 'rgba(200, 217, 230, 0.05)'
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    for(let i=0; i<W; i+=40) { ctx.moveTo(i,0); ctx.lineTo(i,H); }
+    for(let i=0; i<H; i+=40) { ctx.moveTo(0,i); ctx.lineTo(W,i); }
+    ctx.stroke()
 
     // 1) Línea guía a seguir (punteada)
     ctx.setLineDash([10, 8])
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.9)'
+    ctx.strokeStyle = 'rgba(200, 217, 230, 0.4)' // Sky Blue
     ctx.lineWidth = 5
     ctx.beginPath()
     PATH.forEach(([x, y], i) => {
@@ -144,7 +160,15 @@ function LinePrecisionGame() {
     // 2) Trazo del cursor como lápiz (camino real que hizo el cursor)
     const trail = pencilTrail.current
     if (trail.length >= 1) {
-      ctx.strokeStyle = '#0EA5E9' // var(--accent)
+      // Si hay racha buena, el trazo brilla
+      if (streak > 20) {
+        ctx.shadowBlur = 10
+        ctx.shadowColor = '#F7C9D4' // Azalea
+      } else {
+        ctx.shadowBlur = 0
+      }
+      
+      ctx.strokeStyle = '#F7C9D4' // var(--accent) Azalea
       ctx.lineWidth = 4
       ctx.lineCap = 'round'
       ctx.lineJoin = 'round'
@@ -152,8 +176,11 @@ function LinePrecisionGame() {
       ctx.moveTo(trail[0][0], trail[0][1])
       for (let i = 1; i < trail.length; i++) ctx.lineTo(trail[i][0], trail[i][1])
       ctx.stroke()
+      
+      ctx.shadowBlur = 0 // Reset shadow
+
       if (trail.length === 1) {
-        ctx.fillStyle = '#0EA5E9' // var(--accent)
+        ctx.fillStyle = '#F7C9D4' // var(--accent)
         ctx.beginPath()
         ctx.arc(trail[0][0], trail[0][1], 5, 0, Math.PI * 2)
         ctx.fill()
@@ -170,22 +197,30 @@ function LinePrecisionGame() {
     ctx.stroke()
 
     // 4) Punto de llegada (círculo celeste)
-    ctx.fillStyle = '#0EA5E9' // var(--accent)
+    ctx.fillStyle = '#C8D9E6' // var(--sim-border) Sky Blue
     ctx.beginPath()
     ctx.arc(PATH[PATH.length - 1][0], PATH[PATH.length - 1][1], 14, 0, Math.PI * 2)
     ctx.fill()
-    ctx.strokeStyle = '#fff'
+    ctx.strokeStyle = '#F5EFEB' // Beige
     ctx.lineWidth = 2
     ctx.stroke()
 
     // 5) Cursor actual (punto rojo) durante la partida
     if (cursorPos && started && !finished) {
-      ctx.fillStyle = '#EF4444' // var(--danger)
+      ctx.fillStyle = streak > 50 ? '#F59E0B' : '#EF4444' // Gold si racha alta
       ctx.beginPath()
       ctx.arc(cursorPos[0], cursorPos[1], 6, 0, Math.PI * 2)
       ctx.fill()
+      
+      // Anillo de precisión
+      if (streak > 10) {
+        ctx.strokeStyle = `rgba(245, 158, 11, ${Math.min(streak/100, 1)})`
+        ctx.beginPath()
+        ctx.arc(cursorPos[0], cursorPos[1], 10 + Math.sin(Date.now()/100)*2, 0, Math.PI * 2)
+        ctx.stroke()
+      }
     }
-  }, [PATH, started, finished, cursorPos])
+  }, [PATH, started, finished, cursorPos, streak])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -220,6 +255,7 @@ function LinePrecisionGame() {
       const d = Math.hypot(mx - PATH[0][0], my - PATH[0][1])
       if (d < START_CIRCLE_R) {
         setStarted(true)
+        playStart() // Sonido de inicio
         startTime.current = Date.now()
         pathProgress.current = 0
         deviations.current = []
@@ -255,8 +291,20 @@ function LinePrecisionGame() {
       }
     }
 
+    // Lógica de Streak y Sonidos
     if (bestDist > TOL * 2) {
-      setErrorFlash(true)
+      if (!errorFlash) {
+          playError() // Sonido de error solo al entrar en estado de error
+          setErrorFlash(true)
+      }
+      setStreak(0)
+    } else {
+        if (bestDist < TOL / 2) {
+            setStreak(s => s + 1)
+            // Feedback auditivo sutil cada cierto tiempo en racha
+            if (streak % 50 === 0 && streak > 0) playClick()
+        }
+        setErrorFlash(false)
     }
 
     if (bestDist < CATCH_RADIUS) {
@@ -267,6 +315,7 @@ function LinePrecisionGame() {
 
       if (newProgress >= FINISH_THRESHOLD) {
         setFinished(true)
+        playSuccess() // Sonido de éxito
         const avgDev =
           deviations.current.length > 0
             ? deviations.current.reduce((a, b) => a + b, 0) / deviations.current.length
@@ -300,6 +349,7 @@ function LinePrecisionGame() {
         <DifficultySelector value={difficulty} onChange={setDifficulty} disabled={started && !finished} />
         <span className="metric">Tiempo: {(timeMs / 1000).toFixed(2)} s</span>
         <span className="metric">Progreso: {progress}%</span>
+        {streak > 10 && <span className="metric" style={{ color: '#F59E0B', fontWeight: 'bold' }}>Racha: {streak}</span>}
         {finished && <span className="metric">Perfección: {perfection}%</span>}
       </div>
 

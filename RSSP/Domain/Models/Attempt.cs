@@ -11,6 +11,8 @@ namespace Domain.Models
         public int Id { get; set; }
         public string GameKey { get; set; } = null!;
         public string GameDifficulty { get; set; } = null!;
+        public int? SimulationSessionId { get; set; }
+        public SimulationSession? SimulationSession { get; set; }
         public int UserId { get; set; }
         public User User { get; set; } = null!;
         public int TestId { get; set; }
@@ -23,5 +25,8 @@ namespace Domain.Models
         public decimal? SmoothnessScore { get; set; }
         public string CompletionStatus { get; set; } = null!; // Podrías usar un Enum aquí
         public ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
+        public ICollection<TelemetrySample> TelemetrySamples { get; set; } = new List<TelemetrySample>();
+        public ICollection<TelemetryEvent> TelemetryEvents { get; set; } = new List<TelemetryEvent>();
+        public ICollection<AttemptMetric> Metrics { get; set; } = new List<AttemptMetric>();
     }
 }

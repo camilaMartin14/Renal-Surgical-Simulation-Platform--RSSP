@@ -13,7 +13,7 @@ namespace Application.Dtos.Attempts
      string GameKey,
      string GameDifficulty,
      int UserId,
-     string UserName, // Un toque de "Flattening" para facilitar el consumo en el Front. Aplanamiento (Flattening): En el ReadDto incluimos UserName en lugar de todo el objeto User. Esto ahorra ancho de banda y simplifica el JSON.
+     string UserName,
      int TestId,
      string TestName,
      int Duration,
@@ -22,6 +22,10 @@ namespace Application.Dtos.Attempts
      decimal? TrajectoryScore,
      decimal? PrecisionScore,
      decimal? SmoothnessScore,
-     string CompletionStatus
+     string CompletionStatus,
+     IEnumerable<TelemetrySampleDto> TelemetrySamples
     );
+
+    public record TelemetrySampleDto(decimal X, decimal Y, long Timestamp);
+
 }

@@ -1,4 +1,4 @@
-﻿﻿using Domain.Models;
+﻿using Domain.Models;
 using Infraestruture.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -22,7 +22,12 @@ namespace Infraestruture.Repository
 
         public async Task<Attempt?> GetByIdAsync(int id)
         {
-            return await _context.Attempts.FindAsync(id);
+            return await _context.Attempts
+                .Include(a => a.TelemetrySamples)
+                .Include(a => a.TelemetryEvents)
+                .Include(a => a.Metrics)
+                .Include(a => a.Feedbacks)
+                .FirstOrDefaultAsync(a => a.Id == id);
         }
 
         public async Task AddAsync(Attempt attempt)

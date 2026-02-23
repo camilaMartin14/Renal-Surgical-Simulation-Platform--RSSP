@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import GameFrame, { useGameSession } from '../components/GameFrame'
+import GameFrame from '../components/GameFrame'
+import { useGameSession } from '../context/GameSessionContext'
 import DifficultySelector from '../components/DifficultySelector'
 import ErrorFlash from '../components/ErrorFlash'
 import type { Difficulty } from '../types'
@@ -10,8 +11,8 @@ function getN(d: Difficulty): number {
 
 const W = 600
 const H = 450
-const HARD_VISIBLE_MS = 1200
-const HARD_GAP_MS = 400
+const HARD_VISIBLE_MS = 2000
+const HARD_GAP_MS = 800
 
 function ReflexGame() {
   const { endGame, trackMovement } = useGameSession()
@@ -201,7 +202,7 @@ function ReflexGame() {
       <p style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', textAlign: 'center' }}>
         {isBlinkMode
           ? 'Nivel difícil: los puntos se encienden y se apagan. Haz clic en cada uno mientras esté encendido.'
-          : 'Toca solo los puntos rojos. Clic fuera = error crítico.'}
+          : 'Toca solo los puntos rosa (Azalea). Clic fuera = error crítico.'}
       </p>
 
       {phase === 'ready' && (
@@ -212,7 +213,7 @@ function ReflexGame() {
 
       <ErrorFlash trigger={errorFlash} onClear={() => setErrorFlash(false)} className="canvas-wrap" style={{ width: '100%', maxWidth: W, height: H }}>
         <div 
-          style={{ width: W, height: H, position: 'relative', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', cursor: 'crosshair' }} 
+          style={{ width: W, height: H, position: 'relative', background: 'rgba(200, 217, 230, 0.05)', borderRadius: '8px', cursor: 'crosshair' }} 
           onClick={handleCanvasClick}
           onMouseMove={handleMouseMove}
         >

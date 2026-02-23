@@ -1,52 +1,51 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { GAMES } from '../games'
 import { Home as HomeIcon, BarChart2, ChevronRight, PlayCircle } from 'lucide-react'
+import { getAllResults } from '../domain/resultsStore'
+import { useProgressStore } from '../progressStore'
+
+
 
 export default function Home() {
 
+  const { completedGames } = useProgressStore()
+  const [lastScore, setLastScore] = useState<number | null>(null)
+  const [lastGameTitle, setLastGameTitle] = useState<string | null>(null)
+  const [totalTimeMs, setTotalTimeMs] = useState(0)
+  const [totalWeekMs, setTotalWeekMs] = useState(0)
+
+  useEffect(() => {
+    const list = getAllResults().slice().sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())
+    if (list.length > 0) {
+      setLastScore(list[0].perfection)
+      const g = GAMES.find((x) => x.id === list[0].gameId)
+      setLastGameTitle(g?.title ?? list[0].gameId)
+    }
+    const total = list.reduce((acc, r) => acc + r.timeMs, 0)
+    setTotalTimeMs(total)
+    const now = Date.now()
+    const weekMs = list
+      .filter((r) => now - new Date(r.at).getTime() <= 7 * 24 * 60 * 60 * 1000)
+      .reduce((acc, r) => acc + r.timeMs, 0)
+    setTotalWeekMs(weekMs)
+  }, [])
+
+  const hoursTotal = Math.floor(totalTimeMs / 3_600_000)
+  const minutesTotal = Math.round((totalTimeMs % 3_600_000) / 60_000)
+  const hoursWeek = Math.floor(totalWeekMs / 3_600_000)
+  const minutesWeek = Math.round((totalWeekMs % 3_600_000) / 60_000)
+
   return (
-    <div style={{ display: 'flex', gap: '2rem' }}>
-      {/* Left Dashboard Sidebar */}
-      <div style={{ 
-        width: '240px', 
-        flexShrink: 0,
-        display: 'flex', 
-        flexDirection: 'column', 
-        gap: '0.5rem' 
-      }}>
-        <div style={{ 
-          background: 'var(--bg-sidebar)', 
-          borderRadius: '12px', 
-          padding: '1.5rem', 
-          color: 'white',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '2rem' }}>
-            <Link to="/" style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '0.75rem', 
-              padding: '0.75rem', 
-              background: 'rgba(255,255,255,0.1)', 
-              borderRadius: '8px',
-              color: 'white',
-              textDecoration: 'none',
-              fontWeight: 600
-            }}>
+    <div className="dashboard-layout">
+      <div className="dashboard-sidebar">
+        <div className="dashboard-sidebar-inner">
+          <nav className="home-nav">
+            <Link to="/" className="home-nav-link home-nav-link-primary">
               <HomeIcon size={20} />
               Inicio
             </Link>
-            <Link to="/results" style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '0.75rem', 
-              padding: '0.75rem', 
-              color: 'rgba(255,255,255,0.7)', 
-              textDecoration: 'none',
-              fontWeight: 500
-            }}>
+            <Link to="/results" className="home-nav-link home-nav-link-secondary">
               <BarChart2 size={20} />
               Resultados
             </Link>
@@ -54,121 +53,144 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div style={{ flex: 1 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0, color: 'var(--text)' }}>Escenarios de Entrenamiento</h2>
-        </div>
-
+      <div className="dashboard-main">
         <div
           style={{
-            marginBottom: '1.5rem',
-            padding: '1rem 1.25rem',
-            borderRadius: '12px',
-            background: 'rgba(59, 130, 246, 0.08)',
-            border: '1px solid var(--accent)',
             display: 'flex',
-            alignItems: 'center',
             justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            marginBottom: '1.75rem',
             gap: '1rem',
           }}
         >
           <div>
-            <div style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '0.25rem' }}>
+            <h2
+              style={{
+                fontSize: '1.6rem',
+                fontWeight: 700,
+                margin: 0,
+                letterSpacing: '0.03em',
+                textTransform: 'uppercase',
+                color: 'var(--text-light)',
+              }}
+            >
+              Escenarios de Entrenamiento
+            </h2>
+            <p
+              style={{
+                margin: '0.35rem 0 0',
+                fontSize: '0.9rem',
+                color: 'var(--text-subtle)',
+              }}
+            >
+              Practica tareas motoras finas, control de sangrado y un caso renal integrado.
+            </p>
+          </div>
+        </div>
+
+        <div className="home-hero">
+          <div>
+            <div className="home-hero-title">
               Modo demo clínico
             </div>
-            <div style={{ fontSize: '0.95rem', color: 'var(--text)' }}>
+            <div className="home-hero-text">
               Usa la simulación de <strong>Ablación de Tumor Renal</strong> como escenario rápido para mostrar el
-              flujo operador–robot Justina a médicos y decisores.
+              flujo operador–robot en cirugía renal mínimamente invasiva.
             </div>
           </div>
           <Link
             to="/tumor-ablation"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.5rem 1rem',
-              borderRadius: '999px',
-              background: 'var(--accent)',
-              color: 'white',
-              textDecoration: 'none',
-              fontSize: '0.9rem',
-              fontWeight: 600,
-              whiteSpace: 'nowrap',
-            }}
+            className="home-hero-cta"
           >
             Abrir demo
             <ChevronRight size={16} />
           </Link>
         </div>
-        
+
+        <div className="home-intro-grid">
+          <div className="home-intro-main">
+            <div className="home-intro-kicker">
+              Plataforma digital de simulación
+            </div>
+            <h3 className="home-intro-title">
+              Reduciendo el riesgo en el diseño de robots quirúrgicos
+            </h3>
+            <p className="home-intro-text">
+              La aplicación surge a partir de un desafío de la plataforma No Country y consiste en una serie de minijuegos 
+              orientados a medir la precisión de cirujanos al manipular un robot quirúrgico. 
+              Funciona como un entorno de simulación que permite evaluar interacción, desempeño y métricas de control sin necesidad de hardware físico,
+               facilitando la validación temprana de decisiones de diseño en el desarrollo de robótica quirúrgica.
+            </p>
+          </div>
+
+          <div className="home-intro-side">
+            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: 'var(--text)' }}>
+              Qué puedes explorar con RSSP
+            </h3>
+            <ul className="home-intro-list">
+              <li>
+                • Simular interacciones entre un operador humano y un sistema robótico conceptual.
+              </li>
+              <li>
+                • Probar interfaces de control, visualización y feedback sin depender de hardware real.
+              </li>
+              <li>
+                • Registrar métricas básicas de desempeño como trayectorias, tiempos y errores.
+              </li>
+              <li>
+                • Utilizar los resultados como insumo para discusiones con médicos y decisores de salud.
+              </li>
+            </ul>
+          </div>
+        </div>
+
         {/* Stats Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
+        <div className="stat-grid">
           <div className="card">
             <h3 style={{ margin: '0 0 0.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Último Puntaje</h3>
-            <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text)' }}>0%</div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>-</div>
+            <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text)' }}>
+              {lastScore != null ? `${Number(lastScore).toFixed(3)}%` : '0.000%'}
+            </div>
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+              {lastGameTitle ?? '-'}
+            </div>
           </div>
           <div className="card">
             <h3 style={{ margin: '0 0 0.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Horas Totales de Práctica</h3>
-            <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text)' }}>0h 0m</div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>0h 0m esta semana</div>
+            <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text)' }}>
+              {hoursTotal}h {minutesTotal}m
+            </div>
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+              {hoursWeek}h {minutesWeek}m esta semana
+            </div>
           </div>
           <div className="card">
             <h3 style={{ margin: '0 0 0.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Tendencia de Error</h3>
-            <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text)' }}>0%</div>
-            <a href="#" style={{ fontSize: '0.9rem', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              Más detalles <ChevronRight size={14} />
-            </a>
+            <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text)' }}>
+              {lastScore != null ? `${Math.max(0, 100 - lastScore).toFixed(3)}%` : '0.000%'}
+            </div>
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+              Estimación simple basada en la última sesión.
+            </div>
           </div>
         </div>
 
         {/* Scenarios Grid */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-            gap: '1.5rem',
-          }}
-        >
+        <div className="home-scenarios-grid">
           {GAMES.map((g, index) => (
             <Link
               key={g.id}
               to={g.path}
-              style={{
-                display: 'block',
-                background: 'var(--bg-card)',
-                borderRadius: '12px',
-                border: '1px solid var(--border)',
-                overflow: 'hidden',
-                textDecoration: 'none',
-                color: 'inherit',
-                transition: 'transform 0.2s, box-shadow 0.2s',
-                cursor: 'pointer',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)'
-                e.currentTarget.style.boxShadow =
-                  '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = 'none'
-              }}
+              className="home-scenario-card"
             >
               <div
+                className="home-scenario-media"
                 style={{
-                  height: '140px',
                   background: g.image
                     ? `url(${g.image}) center/cover no-repeat`
                     : `linear-gradient(135deg, ${
                         ['#fca5a5', '#fcd34d', '#86efac', '#93c5fd', '#c4b5fd'][index % 5]
                       } 0%, #e2e8f0 100%)`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  position: 'relative',
                 }}
               >
                 {g.image && (
@@ -191,55 +213,24 @@ export default function Home() {
                 />
               </div>
 
-              <div style={{ padding: '1rem' }}>
-                <h3
-                  style={{
-                    margin: '0 0 0.25rem',
-                    fontWeight: 600,
-                    fontSize: '1.1rem',
-                  }}
-                >
+              <div className="home-scenario-body">
+                <h3 className="home-scenario-title">
                   {g.title}
                 </h3>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                    marginBottom: '0.5rem',
-                  }}
-                >
-                  <span
-                    style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}
-                  >
-                    Difficulty:
+                <div className="home-scenario-meta">
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    {g.requiredRank ? `Recomendado para ${g.requiredRank}` : ''}
                   </span>
-                  <div style={{ display: 'flex', color: 'var(--text)' }}>
-                    {'★'.repeat(3 + (index % 3))}
-                    {'☆'.repeat(2 - (index % 3))}
-                  </div>
                 </div>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: '0.85rem',
-                    color: 'var(--text-muted)',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                  }}
-                >
+                <p className="home-scenario-description">
                   {g.description}
                 </p>
-                <div
-                  style={{
-                    marginTop: '0.75rem',
-                    fontSize: '0.8rem',
-                    color: 'var(--text-muted)',
-                  }}
-                >
-                  Mejor Personal: -
+                <div className="home-scenario-footer">
+                  {completedGames.includes(g.id) ? (
+                    <span style={{ color: 'var(--success)', fontWeight: 600 }}>Completado (≥80%)</span>
+                  ) : (
+                    <span style={{ color: 'var(--text-muted)' }}>Pendiente</span>
+                  )}
                 </div>
               </div>
             </Link>

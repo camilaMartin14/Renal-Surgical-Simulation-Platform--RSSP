@@ -30,6 +30,10 @@ namespace Infraestruture.Persistence.Configurations
             builder.HasOne(a => a.Test)
                    .WithMany(t => t.Attempts)
                    .HasForeignKey(a => a.TestId);
+
+            builder.HasOne(a => a.SimulationSession)
+                   .WithMany(s => s.Attempts)
+                   .HasForeignKey(a => a.SimulationSessionId);
         }
     }
 }
