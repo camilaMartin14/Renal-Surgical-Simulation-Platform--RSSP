@@ -9,7 +9,7 @@ Plataforma que ofrece un entorno inmersivo y libre de riesgos donde cirujanos y 
 *   **⚡ Feedback Instantáneo**: Cada movimiento cuenta. Recibe retroalimentación inmediata sobre tu precisión, exactitud y eficiencia.
 *   **🏆 Gamificación Clínica**: Aprende a través de desafíos diseñados para aislar y entrenar competencias quirúrgicas específicas, desde la estabilidad manual hasta la ablación de tumores.
 
-  ### Prueba la demo desde 👉🏻 [aquí](https://renal-surgical-simulation-platform-rssp-2jrlidg8b.vercel.app/)
+  ### Prueba la demo desde 👉 [aquí](https://renal-surgical-simulation-platform-rssp-2jrlidg8b.vercel.app/)
 ---
 
 ## 🛠️ Potencia Tecnológica
