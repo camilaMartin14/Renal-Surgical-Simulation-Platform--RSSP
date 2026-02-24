@@ -1,62 +1,45 @@
 # 🏥 Renal Surgical Simulation Platform (RSSP)
 
-> **Entrenamiento quirúrgico de próxima generación basado en simulación 3D.**
+Plataforma que ofrece un entorno inmersivo y libre de riesgos donde cirujanos y residentes pueden perfeccionar sus habilidades psicomotoras a modo de práctica antes de llegar a un paciente real.
 
-RSSP es una plataforma de entrenamiento de alta fidelidad diseñada para mejorar las habilidades procedimentales a través de simulaciones 3D realistas y análisis detallado del rendimiento.
+## 🌟 ¿Por qué probar la Demo?
+
+*   **🎮 Inmersión Total**: Interactúa con tejidos y herramientas en un entorno 3D reactivo.
+*   **⚡ Feedback Instantáneo**: Cada movimiento cuenta. Recibe retroalimentación inmediata sobre tu precisión, exactitud y eficiencia.
+*   **🏆 Gamificación Clínica**: Aprende a través de desafíos diseñados para aislar y entrenar competencias quirúrgicas específicas, desde la estabilidad manual hasta la ablación de tumores.
+---
+
+## 🛠️ Potencia Tecnológica
+
+### Frontend (Experiencia de Usuario)
+*   **React 18 & Vite**
+*   **Three.js / R3F**
+*   **Recharts**
+*   **TailwindCSS**
+
+### Backend (Motor de Análisis)
+*   **.NET 10 Web API**
+*   **Entity Framework Core & SQL Server**
+*   **Clean Architecture**
 
 ---
 
-## 🚀 Lo que puedes hacer
+## Pasos para levantar el proyecto:
 
-*   **Módulos 3D Interactivos**: Practica habilidades críticas como **Sutura**, **Ablación de Tumores**, **Precisión de Línea** y **Entrenamiento de Reflejos**.
-*   **Física en Tiempo Real**: Experiencia inmersiva impulsada por motores gráficos avanzados.
-*   **Telemetría de Rendimiento**: Rastrea tu precisión, velocidad y tasas de error con métricas granulares.
-*   **Dashboard de Instructor**: Evalúa el progreso de los estudiantes con mapas de calor y reportes post-operatorios.
-*   **Seguimiento de Progreso**: Visualiza tu mejora a lo largo del tiempo con gráficos detallados.
-
----
-
-## 🛠️ Stack Tecnológico
-
-### Frontend (Cliente)
-*   ⚛️ **React 18** + **Vite** - Interfaz ultrarrápida.
-*   🧊 **Three.js** / **React Three Fiber** - Renderizado 3D y física.
-*   📊 **Recharts** - Visualización de datos y métricas quirúrgicas.
-*   🎨 **Lucide React** - Iconografía moderna.
-
-### Backend (API)
-*   🛡️ **.NET 8 Web API** - Backend robusto y escalable.
-*   🗄️ **Entity Framework Core** - ORM para acceso eficiente a datos.
-*   💾 **SQL Server** - Base de datos relacional confiable.
-*   🔐 **JWT Auth** - Autenticación segura basada en roles.
-*   🏗️ **Clean Architecture** - Estructura de código modular y mantenible.
-
----
-
-## 🏁 Cómo empezar
-
-### 1. Backend (API)
+### 1. Iniciar el Motor (Backend)
 ```bash
 cd RSSP/Api
 dotnet restore
 dotnet run
 ```
 
-### 2. Frontend (Cliente)
+### 2. Lanzar la Interfaz (Frontend)
 ```bash
 cd RSSP-Front
 npm install
 npm run dev
 ```
 
-### 3. Acceder a la Plataforma
-Abre tu navegador y ve a la URL indicada (usualmente `http://localhost:5173`).
+### 3. Acceder a la app
+Abre tu navegador en `http://localhost:5173`
 
----
-
-## 📸 Módulos de Simulación
-
-*   **Steady Hand**: Prueba tu estabilidad motora fina.
-*   **Tumor Ablation**: Simulación precisa de eliminación de objetivos.
-*   **Suture**: Practica puntos de entrada y salida de aguja.
-*   **Line Precision**: Sigue trayectorias complejas con exactitud.
