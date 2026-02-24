@@ -2,11 +2,14 @@
 
 Plataforma que ofrece un entorno inmersivo y libre de riesgos donde cirujanos y residentes pueden perfeccionar sus habilidades psicomotoras a modo de práctica antes de llegar a un paciente real.
 
-## 🌟 ¿Por qué probar la Demo?
+
+##  ¿Por qué probar la Demo?
 
 *   **🎮 Inmersión Total**: Interactúa con tejidos y herramientas en un entorno 3D reactivo.
 *   **⚡ Feedback Instantáneo**: Cada movimiento cuenta. Recibe retroalimentación inmediata sobre tu precisión, exactitud y eficiencia.
 *   **🏆 Gamificación Clínica**: Aprende a través de desafíos diseñados para aislar y entrenar competencias quirúrgicas específicas, desde la estabilidad manual hasta la ablación de tumores.
+
+  ### Prueba la demo desde 👉🏻 [aquí](https://renal-surgical-simulation-platform-rssp-2jrlidg8b.vercel.app/)
 ---
 
 ## 🛠️ Potencia Tecnológica
